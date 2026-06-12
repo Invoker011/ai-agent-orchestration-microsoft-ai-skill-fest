@@ -1,0 +1,39 @@
+{
+  "projects": [
+    {
+      "name": "Website Redesign — Q3 Launch",
+      "owner": "Avery Chen",
+      "status": "active",
+      "recentActivity": "User testing completed for new homepage flows. Design tweaks scheduled for next sprint.",
+      "priority": "high"
+    },
+    {
+      "name": "Mobile App Performance Improvements",
+      "owner": "Jordan Patel",
+      "status": "paused",
+      "recentActivity": "Profiling revealed a memory bottleneck in image caching; team paused for deeper investigation.",
+      "priority": "medium"
+    },
+    {
+      "name": "Billing System Migration",
+      "owner": "Renee Morales",
+      "status": "active",
+      "recentActivity": "Data migration scripts passed staging validation; production run planned for Sunday midnight.",
+      "priority": "high"
+    },
+    {
+      "name": "Customer Onboarding Flow Docs",
+      "owner": "Samir Khan",
+      "status": "complete",
+      "recentActivity": "Documentation published and distributed to sales and support teams. Feedback loop open.",
+      "priority": "low"
+    },
+    {
+      "name": "Accessibility Audit and Fixes",
+      "owner": "Lena Fischer",
+      "status": "active",
+      "recentActivity": "Automated checks fixed; manual review of keyboard navigation is in progress.",
+      "priority": "medium"
+    }
+  ]
+}

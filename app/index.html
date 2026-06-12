@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project Pulse</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="dashboard" id="dashboard">
+    <header class="dashboard__header" aria-labelledby="dashboard-title">
+      <h1 id="dashboard-title">Project Pulse</h1>
+      <p id="dashboard-desc">A quick view of active work across teams. Cards are keyboard-focusable — use Tab to navigate.</p>
+    </header>
+
+    <section id="gridContainer" class="dashboard__grid" role="list" aria-labelledby="dashboard-title">
+      <!-- Project cards will be injected here -->
+    </section>
+
+    <div id="error" role="alert" aria-live="assertive" style="margin-top:16px;color:#7a1b1b;display:none;"></div>
+  </main>
+
+  <script>
+    (function () {
+      const grid = document.getElementById('gridContainer');
+      const errorEl = document.getElementById('error');
+
+      function clearGrid() {
+        grid.innerHTML = '';
+      }
+
+      function showError(message) {
+        clearGrid();
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+      }
+
+      function statusBadgeClass(status) {
+        switch ((status || '').toLowerCase()) {
+          case 'active': return 'badge badge--status-active';
+          case 'paused': return 'badge badge--status-paused';
+          case 'complete': return 'badge badge--status-complete';
+          default: return 'badge';
+        }
+      }
+
+      function priorityBadgeClass(priority) {
+        switch ((priority || '').toLowerCase()) {
+          case 'high': return 'badge badge--priority-high';
+          case 'medium': return 'badge badge--priority-medium';
+          case 'low': return 'badge badge--priority-low';
+          default: return 'badge';
+        }
+      }
+
+      function createProjectCard(p) {
+        const article = document.createElement('article');
+        article.className = 'project-card';
+        article.setAttribute('role', 'listitem');
+        article.setAttribute('tabindex', '0');
+        article.setAttribute('aria-label', p.name + ' — ' + p.status + ' — priority ' + p.priority);
+
+        // Title
+        const title = document.createElement('h2');
+        title.className = 'project-card__title';
+        title.textContent = p.name;
+        title.title = p.name;
+        article.appendChild(title);
+
+        // Meta
+        const meta = document.createElement('div');
+        meta.className = 'project-card__meta';
+
+        const owner = document.createElement('div');
+        owner.className = 'owner';
+        owner.innerHTML = '<span class="muted">Owner</span>&nbsp;<span>' + p.owner + '</span>';
+        owner.title = p.owner;
+        meta.appendChild(owner);
+
+        const statusWrap = document.createElement('div');
+        statusWrap.className = 'project-card__status';
+        const statusBadge = document.createElement('span');
+        statusBadge.className = statusBadgeClass(p.status);
+        statusBadge.textContent = p.status;
+        statusBadge.title = p.status;
+        statusWrap.appendChild(statusBadge);
+        meta.appendChild(statusWrap);
+
+        const priorityWrap = document.createElement('div');
+        priorityWrap.className = 'project-card__priority';
+        const priorityBadge = document.createElement('span');
+        priorityBadge.className = priorityBadgeClass(p.priority);
+        priorityBadge.textContent = p.priority;
+        priorityBadge.title = p.priority;
+        priorityWrap.appendChild(priorityBadge);
+        meta.appendChild(priorityWrap);
+
+        article.appendChild(meta);
+
+        // Recent activity
+        const activity = document.createElement('div');
+        activity.className = 'project-card__activity';
+        activity.textContent = p.recentActivity;
+        activity.title = p.recentActivity;
+        article.appendChild(activity);
+
+        return article;
+      }
+
+      function renderProjects(list) {
+        clearGrid();
+        if (!Array.isArray(list) || list.length === 0) {
+          const empty = document.createElement('p');
+          empty.className = 'project-card__activity';
+          empty.textContent = 'No projects available.';
+          grid.appendChild(empty);
+          return;
+        }
+        const fragment = document.createDocumentFragment();
+        list.forEach(p => {
+          const card = createProjectCard(p);
+          fragment.appendChild(card);
+        });
+        grid.appendChild(fragment);
+      }
+
+      // Fetch data
+      fetch('./project-data.json', {cache: "no-store"}).then(function (res) {
+        if (!res.ok) throw new Error('Failed to load project data (' + res.status + ')');
+        return res.json();
+      }).then(function (data) {
+        if (!data || !Array.isArray(data.projects)) {
+          throw new Error('Project data is malformed.');
+        }
+        renderProjects(data.projects);
+      }).catch(function (err) {
+        console.error(err);
+        showError('Sorry — we could not load projects. Please check your connection or try again later.');
+      });
+    })();
+  </script>
+</body>
+</html>
